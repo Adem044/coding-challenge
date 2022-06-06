@@ -1,7 +1,7 @@
 import React from "react";
-import { ProductItem } from "./ProductItem";
+import { CartItem } from "./CartItem";
 
-const PRODUCTS = [
+const CART_ITEMS = [
   {
     id: 1,
     name: "Whole french bread",
@@ -27,15 +27,28 @@ const PRODUCTS = [
     rating: 5,
   },
 ];
-
-export const ProductsList = () => {
+export const CartItems = () => {
   return (
     <div className="flex-grow">
-      <h1 className="text-4xl mb-6">Products</h1>
+      <h1>Cart</h1>
       <div className="flex flex-col gap-8">
-        {PRODUCTS.map((product) => {
-          return <ProductItem key={product.id} {...product} />;
-        })}
+        {CART_ITEMS.map((item) => (
+          <CartItem key={item.id} {...item} />
+        ))}
+      </div>
+      <div className="flex flex-col items-end">
+        <div className="flex flex-col items-end">
+          <h2>Subtotal:</h2>
+          <h3>$0.00</h3>
+        </div>
+        <div className="flex flex-col items-end">
+          <h2>Discount:</h2>
+          <h3>$0.00</h3>
+        </div>
+        <div className="flex flex-col items-end">
+          <h2>Total:</h2>
+          <h3>$0.00</h3>
+        </div>
       </div>
     </div>
   );
