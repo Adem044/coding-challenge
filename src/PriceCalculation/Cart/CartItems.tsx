@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CartItem } from "./CartItem";
+import { useSelector } from "react-redux";
+import { selectCartItems } from "../../redux";
 
 const CART_ITEMS = [
   {
@@ -28,28 +30,31 @@ const CART_ITEMS = [
   },
 ];
 export const CartItems = () => {
+  const cartItems = useSelector(selectCartItems);
+  const totalPrice = useMemo(() => {
+    return cartItems.reduce((total, cartItem) => total + cartItem.price, 0);
+  }, [cartItems]);
   return (
-    <div className="flex-grow">
-      <h1>Cart</h1>
+    <div className="w-full">
+      <h2 className="text-4xl mb-6">Cart</h2>
       <div className="flex flex-col gap-8">
-        {CART_ITEMS.map((item) => (
+        {cartItems.map((item) => (
           <CartItem key={item.id} {...item} />
         ))}
+        {cartItems.length === 0 && (
+          <p className="text-center text-xl">No items in cart</p>
+        )}
       </div>
-      <div className="flex flex-col items-end">
+      {cartItems.length !== 0 && (
         <div className="flex flex-col items-end">
-          <h2>Subtotal:</h2>
-          <h3>$0.00</h3>
+          <h2 className="text-xl text-gray-700 mt-4">Subtotal:</h2>
+          <h3 className="text-lg font-medium">£{totalPrice.toFixed(2)}</h3>
+          <h2 className="text-xl text-gray-700 mt-4">Discount:</h2>
+          <h3 className="text-lg font-medium">£0.00</h3>
+          <h2 className="text-xl text-gray-700 mt-4">Total:</h2>
+          <h3 className="text-lg font-medium">£{totalPrice.toFixed(2)}</h3>
         </div>
-        <div className="flex flex-col items-end">
-          <h2>Discount:</h2>
-          <h3>$0.00</h3>
-        </div>
-        <div className="flex flex-col items-end">
-          <h2>Total:</h2>
-          <h3>$0.00</h3>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

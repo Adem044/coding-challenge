@@ -1,29 +1,32 @@
-import React, { FC } from "react";
-import starFull from "../../../assets/star-full.svg";
-import starEmpty from "../../../assets/star-empty.svg";
-import starHalf from "../../../assets/star-half.svg";
+import React, { FC, useMemo } from "react";
+import starFull from "../../../assets/icons/star-full.svg";
+import starEmpty from "../../../assets/icons/star-empty.svg";
+import starHalf from "../../../assets/icons/star-half.svg";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addToCart,
+  Product,
+  removeFromCart,
+  selectCartItems,
+} from "../../redux";
 
-interface ProductsItemProps {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  rating: number;
-}
-
-export const ProductItem: FC<ProductsItemProps> = ({
-  id,
-  name,
-  description,
-  image,
-  price,
-  rating,
-}) => {
+export const ProductItem: FC<Product> = (props) => {
+  const { id, name, description, image, price, rating } = props;
+  const cartItems = useSelector(selectCartItems);
+  const dispatch = useDispatch();
+  const onAddToCart = () => {
+    dispatch(addToCart(props));
+  };
+  const onRemoveFromCart = () => {
+    dispatch(removeFromCart(id));
+  };
+  const isInCart = useMemo(() => {
+    return cartItems.some((cart) => cart.product.id === id);
+  }, [cartItems]);
   return (
     <div className="flex gap-8">
-      <div>
-        <img src={image} alt={name} />
+      <div className="h-[140px] w-[140px]">
+        <img className="h-full w-full object-contain" src={image} alt={name} />
       </div>
       <div className="flex flex-col flex-grow">
         <div className="flex justify-between flex-grow gap-4">
@@ -68,13 +71,27 @@ export const ProductItem: FC<ProductsItemProps> = ({
                 );
               })}
             </div>
-            <p className="text-xl font-medium">£{Number.parseFloat(String(price)).toFixed(2)}</p>
+            <p className="text-xl font-medium">
+              £{Number.parseFloat(String(price)).toFixed(2)}
+            </p>
           </div>
         </div>
         <div className="self-end mt-6">
-          <button className="bg-indigo-600 border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            add to cart
-          </button>
+          {isInCart ? (
+            <button
+              onClick={onRemoveFromCart}
+              className="bg-red-600 border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              remove from cart
+            </button>
+          ) : (
+            <button
+              onClick={onAddToCart}
+              className="bg-indigo-600 border border-transparent rounded-md py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              add to cart
+            </button>
+          )}
         </div>
       </div>
     </div>
